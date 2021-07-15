@@ -1,0 +1,1043 @@
+<!doctype html>
+<html class="fixed">
+<head>
+
+    <!-- Basic -->
+    <meta charset="UTF-8">
+
+    <title>工作人员信息表</title>
+    <meta name="keywords" content="HTML5 Admin Template" />
+    <meta name="description" content="Porto Admin - Responsive HTML5 Template">
+    <meta name="author" content="okler.net">
+
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- Web Fonts  -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Shadows+Into+Light" rel="stylesheet" type="text/css">
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="assets/vendor/magnific-popup/magnific-popup.css" />
+    <link rel="stylesheet" href="assets/vendor/bootstrap-datepicker/css/datepicker3.css" />
+
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="assets/vendor/select2/select2.css" />
+    <link rel="stylesheet" href="assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    <link rel="stylesheet" href="assets/vendor/pnotify/pnotify.custom.css" />
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="assets/stylesheets/theme.css" />
+
+    <!-- Skin CSS -->
+    <link rel="stylesheet" href="assets/stylesheets/skins/default.css" />
+
+    <!-- Theme Custom CSS -->
+    <link rel="stylesheet" href="assets/stylesheets/theme-custom.css">
+
+    <!-- Head Libs -->
+    <script src="assets/vendor/modernizr/modernizr.js"></script>
+    <style scoped>
+        .div4 {
+            text-align: center;
+            line-height: 200px;
+            width: 300px;
+            height: 200px;
+            opacity:1;
+            border: 1px solid black;
+            position: fixed;
+            left: 600px;
+            top: 250px;
+            background:white;
+            z-index: 3;
+
+        }
+    </style>
+    <script>
+        function getAge(strAge){
+            if(strAge!=null){
+                var birthday = strAge.split(" ");
+                var birArr = birthday[0].split("-");
+
+                var birYear = birArr[0];
+                var birMonth = birArr[1];
+                var birDay = birArr[2];
+
+                d = new Date();
+                var nowYear = d.getFullYear();
+                var nowMonth = d.getMonth() + 1; //记得加1
+                var nowDay = d.getDate();
+                var returnAge;
+
+                if (birArr == null) {
+                    return false;
+                }
+
+                var d = new Date(birYear, birMonth - 1, birDay);
+                if (d.getFullYear() == birYear && (d.getMonth() + 1) == birMonth && d.getDate() == birDay) {
+                    if (nowYear == birYear) {
+                        returnAge = 0; //
+                    } else {
+                        var ageDiff = nowYear - birYear; //
+                        if (ageDiff > 0) {
+                            if (nowMonth == birMonth) {
+                                var dayDiff = nowDay - birDay; //
+                                if (dayDiff < 0) {
+                                    returnAge = ageDiff - 1;
+                                } else {
+                                    returnAge = ageDiff;
+                                }
+                            } else {
+                                var monthDiff = nowMonth - birMonth; //
+                                if (monthDiff < 0) {
+                                    returnAge = ageDiff - 1;
+                                } else {
+                                    returnAge = ageDiff;
+                                }
+                            }
+                        } else {
+                            return  "出生日期晚于今天，数据有误"; //返回-1 表示出生日期输入错误 晚于今天
+                        }
+                    }
+                    return returnAge;
+                } else {
+                    return ("输入的日期格式错误！");
+                }
+            }
+        }
+        function getTabele() {
+            if (sessionStorage.getItem("token")==null){
+                //var myurl="Login.html";
+                window.location.href="Login.html";
+            }else{
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var temp =JSON.parse(xhr.responseText);
+                        var information = temp['data'];
+                        let a = document.getElementById("employee_table_body");
+                        a.innerText="";
+                        for(var i=0;i<information.length;i++){
+
+                            let d =  document.createElement("tr");
+                            d.className="gradeX";
+                            d.style.border="1px solid #ddd";
+                            d.style.padding="8px";
+                            d.style.lineHeight="3";
+                            //d.style.verticalAlign="center";
+                            d.style.alignContent="center";
+                            d.style.backgroundColor="#f5f5f5";
+                            let a_2 =document.createElement("td");
+                            a_2.style.border="1px solid #ddd";
+                            let a_3 =document.createElement("td");
+                            a_3.style.border="1px solid #ddd";
+                            let a_4 =document.createElement("td");
+                            a_4.style.border="1px solid #ddd";
+                            let a_5 =document.createElement("td");
+                            a_5.style.border="1px solid #ddd";
+                            let a_6 =document.createElement("td");
+                            a_6.style.border="1px solid #ddd";
+                            let a_7 =document.createElement("td");
+                            a_7.style.border="1px solid #ddd";
+                            let a_8 =document.createElement("td");
+                            a_8.style.border="1px solid #ddd";
+                            let a_9 =document.createElement("td");
+                            a_9.style.border="1px solid #ddd";
+
+                            let action1 = document.createElement("button");
+                            action1.type="button"
+                            action1.setAttribute("class","mb-xs mt-xs mr-xs btn btn-success");
+                            action1.innerText="修改";
+                            action1.id=information[i]['username'];
+
+                            // action1.setAttribute('data-target',"#modalForm1");
+                            action1.onclick=function(){
+                                var employeeName2 = document.getElementById("employeeName2");
+                                employeeName2.value=action1.id;
+
+                                employeeName2.setAttribute("disabled","true");
+                                doIt();
+
+
+
+                            }
+                            // // action1.setAttribute('innerText',"修改信息");
+                            // action1.href=modalBox;
+                            // action1.class="modal-with-form btn btn-default";
+                            // action1.innerText="修改信息";
+                            // action1.appendChild(button1);
+
+                            let action2 = document.createElement("button");
+                            action2.type="button";
+                            action2.id=information[i]['id'];
+                            action2.setAttribute("class","mb-xs mt-xs mr-xs btn btn-success");
+                            action2.innerText = "删除";
+                            action2.onclick=function(){
+                                deleteEmployee(action2.id);
+                            }
+
+                            let action3 = document.createElement("button");
+                            action3.type="button";
+                            action3.innerText = "采集信息";
+                            action3.id=information[i]['username'];
+                            action3.setAttribute("class","mb-xs mt-xs mr-xs btn btn-success");
+                            action3.onclick=function(){
+                                logIn(action3.id);
+                            }
+                            a_2.textContent =information[i]['username'];
+                            a_3.textContent=information[i]['gender'];
+                            a_4.textContent=information[i]['phone'];
+                            a_5.textContent=information[i]['id_card'];
+                            a_6.textContent=information[i]['hire_date'];
+                            a_7.textContent=information[i]['description'];
+                            var ageText = information[i]['birthday'];
+                            if(ageText!= null){
+                                a_9.textContent=getAge(ageText);
+                            }else{
+
+                            }
+                            a_8.append(action1);
+                            a_8.append(action2);
+                            a_8.append(action3);
+                            d.appendChild(a_2);
+                            d.appendChild(a_3);
+                            d.appendChild(a_9);
+                            d.appendChild(a_4);
+                            d.appendChild(a_5);
+                            d.appendChild(a_6);
+                            d.appendChild(a_7);
+                            d.appendChild(a_8);
+                            a.appendChild(d);
+                        }
+                    }
+                }
+                var text={
+                    "id": 0
+                };
+
+                text= JSON.stringify(text);
+                url="http://localhost:8888/employee/getAll";
+                xhr.open("post", url, true)
+                xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+                xhr.setRequestHeader("token",sessionStorage.getItem("token"));
+                xhr.send(text);
+            }
+
+        }
+
+        function search(){
+            var personName = document.getElementById("personName").value;
+            if(personName == ""){
+                alert("请输入工作人员的姓名");
+            }else{
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var temp =JSON.parse(xhr.responseText);
+                        var information = temp['data'];
+                        if(information!=null){
+                            let a = document.getElementById("employee_table_body");
+                            a.innerText="";
+                            let d =  document.createElement("tr");
+                            d.className="gradeX";
+                            d.style.border="1px solid #ddd";
+                            d.style.padding="8px";
+                            d.style.lineHeight="3";
+                            d.style.alignContent="center";
+                            d.style.backgroundColor="#f5f5f5";
+                            let a_2 =document.createElement("td");
+                            a_2.style.border="1px solid #ddd";
+                            let a_3 =document.createElement("td");
+                            a_3.style.border="1px solid #ddd";
+                            let a_4 =document.createElement("td");
+                            a_4.style.border="1px solid #ddd";
+                            let a_5 =document.createElement("td");
+                            a_5.style.border="1px solid #ddd";
+                            let a_6 =document.createElement("td");
+                            a_6.style.border="1px solid #ddd";
+                            let a_7 =document.createElement("td");
+                            a_7.style.border="1px solid #ddd";
+                            let a_8 =document.createElement("td");
+                            a_8.style.border="1px solid #ddd";
+                            let a_9 =document.createElement("td");
+                            a_9.style.border="1px solid #ddd";
+                            let action1 = document.createElement("button");
+                            action1.type="button"
+                            action1.innerText="修改";
+                            action1.id=information['username'];
+                            action1.setAttribute("class","mb-xs mt-xs mr-xs btn btn-success");
+
+                            action1.onclick=function(){
+                                var employeeName2 = document.getElementById("employeeName2");
+                                employeeName2.value=action1.id;
+
+                                employeeName2.setAttribute("disabled","true");
+                                doIt();
+                            }
+
+
+                            let action2 = document.createElement("button");
+                            action2.type="button";
+                            action2.id=information['id'];
+                            action2.setAttribute("class","mb-xs mt-xs mr-xs btn btn-success");
+                            action2.innerText = "删除";
+
+                            action2.onclick=function(){
+                                deleteEmployee(action2.id);
+                            }
+
+                            let action3 = document.createElement("button");
+                            action3.type="button";
+                            action3.innerText = "采集信息";
+                            action3.id=information['username'];
+                            action3.setAttribute("class","mb-xs mt-xs mr-xs btn btn-success");
+                            action3.onclick=function(){
+                                logIn(action3.id);
+                            }
+                            a_2.textContent =information['username'];
+                            a_3.textContent=information['gender'];
+                            a_4.textContent=information['phone'];
+                            a_5.textContent=information['id_card'];
+                            a_6.textContent=information['hire_date'];
+                            a_7.textContent=information['description'];
+                            var ageText =information['birthday'];
+                            if(ageText!=null){
+                                a_9.textContent=getAge(ageText);
+                            }else{
+
+                            }
+                            a_8.append(action1);
+                            a_8.append(action2);
+                            a_8.append(action3);
+                            d.appendChild(a_2);
+                            d.appendChild(a_3);
+                            d.appendChild(a_9);
+                            d.appendChild(a_4);
+                            d.appendChild(a_5);
+                            d.appendChild(a_6);
+                            d.appendChild(a_7);
+                            d.appendChild(a_8);
+                            a.appendChild(d);
+                        }else{
+                            alert("该工作人员不存在，请确认姓名是否正确...");
+                        }
+
+
+
+                    }
+                }
+                var text={
+                    "username": personName
+                };
+
+                text= JSON.stringify(text);
+                url="http://localhost:8888/employee/getByUserName";
+                xhr.open("post", url, true)
+                xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+                xhr.setRequestHeader("token",sessionStorage.getItem("token"));
+                xhr.send(text);
+            }
+
+        }
+
+        function deleteEmployee(employeeId){
+            var con;
+            con=confirm("确定删除该工作人员及其所有信息?"); //在页面上弹出对话框
+            if(con==true){
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        alert(JSON.parse(xhr.responseText)['msg']);
+                        getTabele();
+                    }
+                }
+                var text={
+                    "id": employeeId
+                };
+
+                text= JSON.stringify(text);
+                url="http://localhost:8888/employee/delete";
+                xhr.open("post", url, true)
+                xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+                xhr.setRequestHeader("token",sessionStorage.getItem("token"));
+                xhr.send(text);
+            }
+            else {
+
+            }
+        }
+
+        function addEmployee(){
+            var xhr = new XMLHttpRequest();
+            var employeeName = document.getElementById("employeeName").value;
+            var employeeGender = document.getElementById("employeeGender").value;
+            var employeeBirthday = document.getElementById("employeeBirthday").value;
+            var employeeTelephone = document.getElementById("employeeTelephone").value;
+            var employeeid_card = document.getElementById("employeeid_card").value;
+            var employeehire_date = document.getElementById("employeehire_date").value;
+            var employeeDescription = document.getElementById("employeeDescription").value;
+            xhr.withCredentials = true;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    message=JSON.parse(xhr.responseText)['msg'];
+                    alert(message);
+                    getTabele();
+                }
+            }
+            var text={
+                "username": employeeName,
+                "password":"123",
+                "gender":employeeGender,
+                "birthday":employeeBirthday+" 12:00:00",
+                "phone":employeeTelephone,
+                "id_card":employeeid_card,
+                "hire_date":employeehire_date,
+                "description":employeeDescription
+            };
+            text= JSON.stringify(text);
+            url="http://localhost:8888/employee/add";
+            xhr.open("post", url, true)
+            xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+            xhr.setRequestHeader("token",sessionStorage.getItem("token"));
+            xhr.send(text);
+        }
+
+        function editEmployee(){
+            var xhr = new XMLHttpRequest();
+            var employeeName = document.getElementById("employeeName2").value;
+            var employeeGender = document.getElementById("employeeGender2").value;
+            var employeeTelephone = document.getElementById("employeeTelephone2").value;
+            var employeeid_card = document.getElementById("employeeid_card2").value;
+            var employeehire_date = document.getElementById("employeehire_date2").value;
+            var employeeDescription = document.getElementById("employeeDescription2").value;
+            xhr.withCredentials = true;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    message=JSON.parse(xhr.responseText)['msg'];
+                    alert(message);
+                    getTabele();
+                }
+            }
+            var text={
+                "username": employeeName,
+                "password":"123",
+                "gender":employeeGender,
+                "phone":employeeTelephone,
+                "id_card":employeeid_card,
+                "hire_date":employeehire_date,
+                "description":employeeDescription
+            };
+            text= JSON.stringify(text);
+            url="http://localhost:8888/employee/update";
+            xhr.open("post", url, true)
+            xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+            xhr.setRequestHeader("token",sessionStorage.getItem("token"));
+            xhr.send(text);
+        }
+
+        function doIt() {
+            var div = document.getElementById("show");
+            if (div.style.display == "block" ) {
+                div.style.display = "none";
+            } else {
+                div.style.display = "block";
+            }
+        }
+
+        function logIn(username){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    alert(xhr.responseText);
+                    var temp =JSON.parse(xhr.responseText);
+                    sessionStorage.setItem("token2",temp['data']);
+                    //document.cookie = xhr.responseText;
+                    window.location.href="GetEmployeeInfo.html";
+                }
+            }
+            var data={
+                username:username,
+                password:"123",
+
+            };
+            data= JSON.stringify(data);
+
+            url="http://localhost:8888/employee/login";
+            xhr.open("post", url, true);
+            xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+            xhr.send(data);
+
+        }
+    </script>
+
+
+</head>
+<body onload="getTabele()">
+<section class="body">
+
+    <!-- start: header -->
+    <header class="header">
+        <div class="logo-container">
+            <a href="Index.html" class="logo">
+                <img src="assets/images/logo.png" height="35" alt="Porto Admin" />
+            </a>
+            <div class="visible-xs toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
+                <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+            </div>
+        </div>
+
+        <!-- start: search & user box -->
+        <div class="header-right">
+
+            <span class="separator"></span>
+
+            <ul class="notifications">
+
+
+                <li>
+                    <a href="#" class="dropdown-toggle notification-icon" data-toggle="dropdown">
+                        <i class="fa fa-bell"></i>
+                        <span class="badge">3</span>
+                    </a>
+
+                    <div class="dropdown-menu notification-menu">
+                        <div class="notification-title">
+                            <span class="pull-right label label-default">3</span>
+                            通知
+                        </div>
+
+                        <div class="content">
+                            <ul>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <div class="image">
+                                            <i class="fa fa-thumbs-down bg-danger"></i>
+                                        </div>
+                                        <span class="title">张三摔倒了</span>
+                                        <span class="message">刚刚</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <div class="image">
+                                            <i class="fa fa-lock bg-warning"></i>
+                                        </div>
+                                        <span class="title">李四笑了</span>
+                                        <span class="message">15min前</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <div class="image">
+                                            <i class="fa fa-signal bg-success"></i>
+                                        </div>
+                                        <span class="title">王五家有陌生人</span>
+                                        <span class="message">07/06/2020</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <hr />
+
+                            <div class="text-right">
+                                <a href="#" class="view-more">View All</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+
+
+
+            </ul>
+
+            <span class="separator"></span>
+
+            <div id="userbox" class="userbox">
+                <a href="#" data-toggle="dropdown">
+                    <figure class="profile-picture">
+                        <img src="assets/images/!logged-user.jpg" alt="Joseph Doe" class="img-circle" data-lock-picture="assets/images/!logged-user.jpg" />
+                    </figure>
+                    <div class="profile-info" data-lock-name="John Doe" data-lock-email="johndoe@JSOFT.com">
+                        <span class="name" id="username">admin</span>
+								<script>
+									var label = document.getElementById("username");
+									label.innerHTML=document.cookie;
+								</script>
+                        <span class="role">管理员</span>
+                    </div>
+
+                    <i class="fa custom-caret"></i>
+                </a>
+
+                <div class="dropdown-menu">
+                    <ul class="list-unstyled">
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="Register.html"><i class="fa fa-user"></i>新增用户</a>
+                        </li>
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="ChangePassword.html"><i class="fa fa-lock"></i> 修改密码</a>
+                        </li>
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="Login.html"><i class="fa fa-power-off"></i> 退出登录</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- end: search & user box -->
+    </header>
+    <!-- end: header -->
+
+    <div class="inner-wrapper">
+        <!-- start: sidebar -->
+        <aside id="sidebar-left" class="sidebar-left">
+
+            <div class="sidebar-header">
+
+                <div class="sidebar-toggle hidden-xs" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
+                    <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+                </div>
+            </div>
+
+            <div class="nano">
+                <div class="nano-content">
+                    <nav id="menu" class="nav-main" role="navigation">
+                        <ul class="nav nav-main">
+                            <li class="nav-active">
+                                <a href="Index.html">
+                                    <i class="fa fa-home" aria-hidden="true"></i>
+                                    <span>首页</span>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                                    <span>老年人信息管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="InfoTable_Oldman.html">
+                                            信息表
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="GetOlderInfo.html">
+                                            信息采集
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-parent nav-expanded nav-active">
+                                <a>
+                                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                                    <span>工作人员信息管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li class="nav-active">
+                                        <a href="InfoTable_Worker.html">
+                                            信息表
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="GetEmployeeInfo.html">
+                                            信息采集
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-table" aria-hidden="true"></i>
+                                    <span>义工信息管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="InfoTable_Volunteer.html">
+                                            信息表
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="GetVolunteerInfo.html">
+                                            信息采集
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    <span>数据管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="Info_Oldman.html">
+                                            老年人信息
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Info_Worker.html">
+                                            工作人员信息
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Info_Volunteer.html">
+                                            义工信息
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-columns" aria-hidden="true"></i>
+                                    <span>摄像头管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="Cam_Room.html">
+                                            房间摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Computer.html">
+                                            电脑摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Corridor.html">
+                                            走廊摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Yard.html">
+                                            院子摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Desk.html">
+                                            桌子摄像头
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+
+
+                        </ul>
+                    </nav>
+
+
+
+                </div>
+
+            </div>
+
+        </aside>
+        <!-- end: sidebar -->
+
+
+
+
+        <section role="main" class="content-body">
+            <header class="page-header">
+                <h2>工作人员信息表</h2>
+
+                <div class="right-wrapper pull-right">
+                    <ol class="breadcrumbs">
+                        <li>
+                            <a href="Info_Worker.html">
+                                <i class="fa fa-home"></i>
+                            </a>
+                        </li>
+                        <li><span>工作人员信息管理</span></li>
+                        <li><span>信息表</span></li>
+                    </ol>
+
+                    <a class="sidebar-right-toggle" data-open="sidebar-right"><i class="fa fa-chevron-left"></i></a>
+                </div>
+            </header>
+
+            <!-- start: page -->
+            <section class="panel">
+                <header class="panel-heading">
+                    <div class="panel-actions">
+                        <a href="#" class="fa fa-caret-down"></a>
+                        <a href="#" class="fa fa-times"></a>
+                    </div>
+
+                    <h2 class="panel-title">工作人员信息表</h2><br>
+                    <div>
+
+                        <a class="mb-xs mt-xs mr-xs modal-basic btn btn-primary" href="#modalForm1" >添加信息</a>
+
+                        <div style="float:right;width: 40%">
+                            <div class="form-group mb-none">
+                                <div class="input-group">
+                                    <input id="personName" type="text" placeholder="请输入工作人员的姓名..." class="form-control input-lg" />
+                                    <span class="input-group-btn" style="width: 30%">
+										<button class="btn btn-primary btn-lg" type="submit" onclick="search()">搜索</button>
+									</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                </header>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped mb-none" id="employee_table">
+                        <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>生日</th>
+                            <th>电话</th>
+                            <th>身份证号</th>
+                            <th>入职日期</th>
+                            <th>描述</th>
+                            <th style="width: 24%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="employee_table_body">
+
+                        </tbody>
+                    </table>
+                    <div class="div4" id="show" style="display: none">
+                        <label>确认修改该成员信息？</label>
+                        <a class="mb-xs mt-xs mr-xs modal-basic btn btn-primary" href="#modalForm2" onclick="doIt()">确认</a>
+                        <a  class="mb-xs mt-xs mr-xs btn btn-primary" href="InfoTable_Worker.html" >返回</a>
+                    </div>
+
+                    <!-- 模态框-->
+                    <section class="panel">
+                        <!-- Modal Form -->
+                        <div id="modalForm1" class="modal-block modal-block-primary mfp-hide">
+                            <section class="panel">
+                                <header class="panel-heading">
+                                    <h2 class="panel-title">添加工作人员</h2>
+                                </header>
+                                <div class="panel-body">
+                                    <form id="demo-form" class="form-horizontal mb-lg" novalidate="novalidate">
+                                        <div class="form-group mt-lg">
+                                            <label class="col-sm-3 control-label">姓名</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeName"  class="form-control" placeholder="请输入工作人员的姓名..." required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">性别</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeGender" class="form-control" placeholder="请输入工作人员的性别..." required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">生日</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeBirthday" class="form-control" placeholder="请输入工作人员的生日..." required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">电话</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeTelephone"  class="form-control" placeholder="请输入工作人员的联系方式..." />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">身份证号</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeid_card" class="form-control" placeholder="请输入工作人员的身份证号..." />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">入职日期</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeehire_date" class="form-control" placeholder="请输入工作人员的入职日期..." />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">描述</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" id="employeeDescription" class="form-control" placeholder="请输入对该工作人员的描述..." required></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <footer class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-md-12 text-right">
+                                            <button class="btn btn-primary modal-confirm" onclick="addEmployee()">添加</button>
+                                            <button class="btn btn-default modal-dismiss">返回</button>
+                                        </div>
+                                    </div>
+                                </footer>
+                            </section>
+                        </div>
+
+                        <div id="modalForm2" class="modal-block modal-block-primary mfp-hide">
+                            <section class="panel">
+                                <header class="panel-heading">
+                                    <h2 class="panel-title">修改工作人员信息</h2>
+                                </header>
+                                <div class="panel-body">
+                                    <form id="demo-form2" class="form-horizontal mb-lg" novalidate="novalidate">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">姓名</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeName2" class="form-control"  required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">性别</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeGender2" class="form-control" placeholder="请输入工作人员的性别..." required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">电话</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeTelephone2"  class="form-control" placeholder="请输入工作人员的联系方式..." />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">身份证号</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeeid_card2" class="form-control" placeholder="请输入工作人员的身份证号..." />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">入职日期</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" id="employeehire_date2" class="form-control" placeholder="请输入工作人员的入职日期..." />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">描述</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" id="employeeDescription2" class="form-control" placeholder="请输入对该工作人员的描述..." required></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <footer class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-md-12 text-right">
+                                            <button class="btn btn-primary modal-confirm" onclick="editEmployee()">修改</button>
+                                            <button class="btn btn-default modal-dismiss">返回</button>
+                                        </div>
+                                    </div>
+                                </footer>
+                            </section>
+                        </div>
+
+
+
+                    </section>
+
+
+                </div>
+            </section>
+            <!-- end: page -->
+        </section>
+    </div>
+
+    <aside id="sidebar-right" class="sidebar-right">
+        <div class="nano">
+            <div class="nano-content">
+                <a href="#" class="mobile-close visible-xs">
+                    Collapse <i class="fa fa-chevron-right"></i>
+                </a>
+
+                <div class="sidebar-right-wrapper">
+
+                    <div class="sidebar-widget widget-calendar">
+                        <h6>Upcoming Tasks</h6>
+                        <div data-plugin-datepicker data-plugin-skin="dark" ></div>
+
+                        <ul>
+                            <li>
+                                <time datetime="2020-07-06T00:00+00:00">07/06/2020</time>
+                                <span>周末出游</span>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
+
+<div id="dialog" class="modal-block mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Are you sure?</h2>
+        </header>
+        <div class="panel-body">
+            <div class="modal-wrapper">
+                <div class="modal-text">
+                    <p>Are you sure that you want to delete this row?</p>
+                </div>
+            </div>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button id="dialogConfirm" class="btn btn-primary">Confirm</button>
+                    <button id="dialogCancel" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>
+
+
+
+
+
+
+
+<!-- Vendor -->
+<script src="assets/vendor/jquery/jquery.js"></script>
+<script src="assets/vendor/jquery-browser-mobile/jquery.browser.mobile.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="assets/vendor/nanoscroller/nanoscroller.js"></script>
+<script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script src="assets/vendor/magnific-popup/magnific-popup.js"></script>
+<script src="assets/vendor/jquery-placeholder/jquery.placeholder.js"></script>
+
+<!-- Specific Page Vendor -->
+<script src="assets/vendor/select2/select2.js"></script>
+<script src="assets/vendor/jquery-datatables/media/js/jquery.dataTables.js"></script>
+<script src="assets/vendor/jquery-datatables-bs3/assets/js/datatables.js"></script>
+<script src="assets/vendor/pnotify/pnotify.custom.js"></script>
+
+<!-- Theme Base, Components and Settings -->
+<script src="assets/javascripts/theme.js"></script>
+
+<!-- Theme Custom -->
+<script src="assets/javascripts/theme.custom.js"></script>
+
+<!-- Theme Initialization Files -->
+<script src="assets/javascripts/theme.init.js"></script>
+
+
+<!-- Examples -->
+<script src="assets/javascripts/tables/examples.datatables.editable.js"></script>
+<script src="assets/javascripts/ui-elements/examples.modals.js"></script>
+</body>
+</html>

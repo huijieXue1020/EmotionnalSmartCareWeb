@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试界面</title>
+    <script>
+        function first_run(){
+            console.log(localStorage['token']);
+            if (localStorage['token']!=null){
+
+            }else{
+                window.location.href="login.html";
+            }
+        }
+
+        // function test(){//测试修改密码
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.withCredentials = true;
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             alert(xhr.responseText);
+        //         }
+        //     }
+        //     var temp =JSON.parse(localStorage.getItem("token"));
+        //     var text={
+        //         "oldPassword": "123",
+        //         "newPassword": "121"
+        //     };
+        //     text= JSON.stringify(text);
+        //     url="http://localhost:8888/sysUser/changePassword";
+        //     xhr.open("post", url, true)
+        //     xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+        //     xhr.setRequestHeader("token",temp['data']);
+        //
+        //     console.log(temp['data']);
+        //     xhr.send(text);
+        // }
+
+        // function test(){//测试编辑管理员信息
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.withCredentials = true;
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             alert(xhr.responseText);
+        //         }
+        //     }
+        //     var temp =JSON.parse(localStorage.getItem("token"));
+        //     var text={
+        //         "realName": "邓志文",
+        //         "email": "litterboydeng@qq.com",
+        //         "createTime": "2020-06-30 11:45:49"
+        //     };
+        //     text= JSON.stringify(text);
+        //     url="http://localhost:8888/sysUser/editSysUserInfo";
+        //     xhr.open("post", url, true)
+        //     xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+        //     xhr.setRequestHeader("token",temp['data']);
+        //
+        //     console.log(temp['data']);
+        //     xhr.send(text);
+        // }
+
+        // function test(){//测试添加老人
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.withCredentials = true;
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             alert(xhr.responseText);
+        //         }
+        //     }
+        //     var temp =JSON.parse(localStorage.getItem("token"));
+        //     var text={
+        //         "username": "wyr" //必选项
+        //     };
+        //     text= JSON.stringify(text);
+        //     url="http://localhost:8888/oldPerson/add";
+        //     xhr.open("post", url, true)
+        //     xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+        //     xhr.setRequestHeader("token",temp['data']);
+        //
+        //     console.log(temp['data']);
+        //     xhr.send(text);
+        // }
+
+        // function test(){//测试修改老人信息
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.withCredentials = true;
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             alert(xhr.responseText);
+        //         }
+        //     }
+        //     var temp =JSON.parse(localStorage.getItem("token"));
+        //     var text={
+        //         "username": "wyr",
+        //         "gender": "男"
+        //     };
+        //     text= JSON.stringify(text);
+        //     url="http://localhost:8888/oldPerson/update";
+        //     xhr.open("post", url, true)
+        //     xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+        //     xhr.setRequestHeader("token",temp['data']);
+        //
+        //     console.log(temp['data']);
+        //     xhr.send(text);
+        // }
+
+        function test(){//测试删除老人
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    alert(xhr.responseText);
+                }
+            }
+            var temp =JSON.parse(localStorage.getItem("token"));
+            var text={
+                "id": 21
+            };
+            text= JSON.stringify(text);
+            url="http://localhost:8888/oldPerson/delete";
+            xhr.open("post", url, true)
+            xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+            xhr.setRequestHeader("token",temp['data']);
+
+            console.log(temp['data']);
+            xhr.send(text);
+        }
+
+        // function test(){//测试查看老人信息
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.withCredentials = true;
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             alert(xhr.responseText);
+        //         }
+        //     }
+        //     var temp =JSON.parse(localStorage.getItem("token"));
+        //     var text={
+        //         "id": 0
+        //     };
+        //     text= JSON.stringify(text);
+        //     url="http://localhost:8888/oldPerson/getAll";
+        //     xhr.open("post", url, true)
+        //     xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+        //     xhr.setRequestHeader("token",temp['data']);
+        //
+        //     console.log(temp['data']);
+        //     xhr.send(text);
+        // }
+
+
+    </script>
+
+</head>
+<body onload="first_run()">
+<input type="button" onclick="test()" value="测试">
+</body>
+</html>

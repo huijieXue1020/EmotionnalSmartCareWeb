@@ -1,0 +1,528 @@
+<!doctype html>
+<html class="fixed">
+<head>
+
+    <!-- Basic -->
+    <meta charset="UTF-8">
+
+    <title>情感智能看护系统</title>
+    <meta name="keywords" content="HTML5 Admin Template" />
+    <meta name="description" content="Porto Admin - Responsive HTML5 Template">
+    <meta name="author" content="okler.net">
+
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- Web Fonts  -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Shadows+Into+Light" rel="stylesheet" type="text/css">
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="assets/vendor/magnific-popup/magnific-popup.css" />
+    <link rel="stylesheet" href="assets/vendor/bootstrap-datepicker/css/datepicker3.css" />
+
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="assets/vendor/jqvmap/jqvmap.css" />
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="assets/stylesheets/theme.css" />
+
+    <!-- Skin CSS -->
+    <link rel="stylesheet" href="assets/stylesheets/skins/default.css" />
+
+    <!-- Theme Custom CSS -->
+    <link rel="stylesheet" href="assets/stylesheets/theme-custom.css">
+
+    <!-- Head Libs -->
+    <script src="assets/vendor/modernizr/modernizr.js"></script>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    <script type="text/javascript">
+
+
+        function getAge(strAge){
+            if(strAge!=null){
+                var birthday = strAge.split("T");
+                var birArr = birthday[0].split("-");
+
+                var birYear = birArr[0];
+                var birMonth = birArr[1];
+                var birDay = birArr[2];
+
+                d = new Date();
+                var nowYear = d.getFullYear();
+                var nowMonth = d.getMonth() + 1; //记得加1
+                var nowDay = d.getDate();
+                var returnAge;
+
+
+                if (birArr == null) {
+                    return false;
+                }
+                if (nowYear == birYear) {
+                    returnAge = 0; //
+                } else {
+                    var ageDiff = nowYear - birYear; //
+                    if (ageDiff > 0) {
+                        if (nowMonth == birMonth) {
+                            var dayDiff = nowDay - birDay; //
+                            if (dayDiff < 0) {
+                                returnAge = ageDiff - 1;
+                            } else {
+                                returnAge = ageDiff;
+                            }
+                        } else {
+                            var monthDiff = nowMonth - birMonth; //
+                            if (monthDiff < 0) {
+                                returnAge = ageDiff - 1;
+                            } else {
+                                returnAge = ageDiff;
+                            }
+                        }
+                    } else {
+                        return  "出生日期晚于今天，数据有误"; //返回-1 表示出生日期输入错误 晚于今天
+                    }
+                }
+                return returnAge;
+            }
+        }
+        function draw() {
+            if (sessionStorage.getItem("token")==null){
+                //var myurl="Login.html";
+                window.location.href="Login.html";
+            }else {
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('main'));
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var message = JSON.parse(xhr.responseText);
+                        var ageGroup = [0, 0, 0, 0];
+                        var age;
+                        for (var i = 0; i < message['data'].length; i++) {
+                            ageTime = message['data'][i]['birthday'];
+                            if (ageTime != null) {
+                                age = getAge(ageTime);
+                                // alert(age);
+                                if (age <= 60) {
+                                    ageGroup[0]++;
+                                } else if (age > 60 && age <= 70) {
+                                    ageGroup[1]++;
+                                } else if (age > 70 && age <= 80) {
+                                    ageGroup[2]++;
+                                } else {
+                                    ageGroup[3]++;
+                                }
+                            }
+                        }
+                        // 指定图表的配置项和数据
+                        var option = {
+                            title: {
+                                text: '老年人年龄分布'
+                            },
+                            tooltip: {},
+                            legend: {
+                                data: ['年龄']
+                            },
+                            xAxis: {
+                                data: ["60岁及以下", "60-70岁", "70-80岁", "80岁以上"]
+                            },
+                            yAxis: {},
+                            series: [{
+                                name: '年龄',
+                                type: 'bar',
+                                data: ageGroup
+                            }]
+                        };
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+
+                    }
+                }
+                var text = {
+                    "id": 0
+                };
+
+                text = JSON.stringify(text);
+                url = "http://localhost:8888/oldPerson/getAll";
+                xhr.open("post", url, true)
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.setRequestHeader("token", sessionStorage.getItem("token"));
+                xhr.send(text);
+
+            }
+        }
+
+    </script>
+
+</head>
+<body onload="draw()">
+<section class="body">
+
+    <!-- start: header -->
+    <header class="header">
+        <div class="logo-container">
+            <a href="Index.html" class="logo">
+                <img src="assets/images/logo.png" height="40" alt="JSOFT Admin" />
+            </a>
+            <div class="visible-xs toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
+                <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+            </div>
+        </div>
+
+        <!-- start: search & user box -->
+        <div class="header-right">
+
+            <span class="separator"></span>
+
+            <ul class="notifications">
+
+
+                <li>
+                    <a href="#" class="dropdown-toggle notification-icon" data-toggle="dropdown">
+                        <i class="fa fa-bell"></i>
+                        <span class="badge">3</span>
+                    </a>
+
+                    <div class="dropdown-menu notification-menu">
+                        <div class="notification-title">
+                            <span class="pull-right label label-default">3</span>
+                            通知
+                        </div>
+
+                        <div class="content">
+                            <ul>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <div class="image">
+                                            <i class="fa fa-thumbs-down bg-danger"></i>
+                                        </div>
+                                        <span class="title">张三摔倒了</span>
+                                        <span class="message">刚刚</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <div class="image">
+                                            <i class="fa fa-lock bg-warning"></i>
+                                        </div>
+                                        <span class="title">李四笑了</span>
+                                        <span class="message">15min前</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <div class="image">
+                                            <i class="fa fa-signal bg-success"></i>
+                                        </div>
+                                        <span class="title">王五家有陌生人</span>
+                                        <span class="message">07/06/2020</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <hr />
+
+                            <div class="text-right">
+                                <a href="#" class="view-more">View All</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+
+
+
+            </ul>
+
+            <span class="separator"></span>
+
+            <div id="userbox" class="userbox">
+                <a href="#" data-toggle="dropdown">
+                    <figure class="profile-picture">
+                        <img src="assets/images/!logged-user.jpg" alt="Joseph Doe" class="img-circle" data-lock-picture="assets/images/!logged-user.jpg" />
+                    </figure>
+                    <div class="profile-info" data-lock-name="John Doe" data-lock-email="johndoe@JSOFT.com">
+                        <span class="name" id="username">admin</span>
+								<script>
+									var label = document.getElementById("username");
+									label.innerHTML=document.cookie;
+								</script>
+                        <span class="role">管理员</span>
+                    </div>
+
+                    <i class="fa custom-caret"></i>
+                </a>
+
+                <div class="dropdown-menu">
+                    <ul class="list-unstyled">
+                        <li class="divider"></li>
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="pages-user-profile.html"><i class="fa fa-user"></i> 个人信息</a>
+                        </li>
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="ChangePassword.html"><i class="fa fa-lock"></i> 修改密码</a>
+                        </li>
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="pages-Login.html"><i class="fa fa-power-off"></i> 退出登录</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- end: search & user box -->
+    </header>
+    <!-- end: header -->
+
+    <div class="inner-wrapper">
+        <!-- start: sidebar -->
+        <aside id="sidebar-left" class="sidebar-left">
+
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    Navigation
+                </div>
+                <div class="sidebar-toggle hidden-xs" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
+                    <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+                </div>
+            </div>
+
+            <div class="nano">
+                <div class="nano-content">
+                    <nav id="menu" class="nav-main" role="navigation">
+                        <ul class="nav nav-main">
+                            <li class="nav-active">
+                                <a href="Index.html">
+                                    <i class="fa fa-home" aria-hidden="true"></i>
+                                    <span>首页</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-copy" aria-hidden="true"></i>
+                                    <span>系统设置模块</span>
+                                </a>
+
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                                    <span>老年人信息管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="InfoTable_Oldman.html">
+                                            信息表
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="GetOlderInfo.html">
+                                            信息采集
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                                    <span>工作人员信息管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="InfoTable_Worker.html">
+                                            信息表
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="GetEmployeeInfo.html">
+                                            信息采集
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-table" aria-hidden="true"></i>
+                                    <span>义工信息管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="InfoTable_Volunteer.html">
+                                            信息表
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="GetVolunteerInfo.html">
+                                            信息采集
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    <span>数据管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="Info_Oldman.html">
+                                            老年人信息
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Info_Worker.html">
+                                            工作人员信息
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Info_Volunteer.html">
+                                            义工信息
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-parent">
+                                <a>
+                                    <i class="fa fa-columns" aria-hidden="true"></i>
+                                    <span>摄像头管理</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    <li>
+                                        <a href="Cam_Room.html">
+                                            房间摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Computer.html">
+                                            电脑摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Corridor.html">
+                                            走廊摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Yard.html">
+                                            院子摄像头
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="Cam_Desk.html">
+                                            桌子摄像头
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+
+
+                        </ul>
+                    </nav>
+
+
+
+                </div>
+
+            </div>
+
+        </aside>
+        <!-- end: sidebar -->
+
+        <section role="main" class="content-body">
+            <header class="page-header">
+                <h2>老年人信息</h2>
+
+                <div class="right-wrapper pull-right">
+                    <ol class="breadcrumbs">
+                        <li>
+                            <a href="Index.html">
+                                <i class="fa fa-home"></i>
+                            </a>
+                        </li>
+                        <li><span>数据管理</span></li>
+                        <li><span>老年人信息</span></li>
+                    </ol>
+
+                    <a class="sidebar-right-toggle" data-open="sidebar-right"><i class="fa fa-chevron-left"></i></a>
+                </div>
+            </header>
+
+            <!-- start: page -->
+            <div class="row">
+                <div id="main" style="width: 600px;height:400px;"></div>
+            </div>
+
+            <!-- end: page -->
+        </section>
+    </div>
+
+    <aside id="sidebar-right" class="sidebar-right">
+        <div class="nano">
+            <div class="nano-content">
+                <a href="#" class="mobile-close visible-xs">
+                    Collapse <i class="fa fa-chevron-right"></i>
+                </a>
+
+
+                <div class="sidebar-right-wrapper">
+
+                    <div class="sidebar-widget widget-calendar">
+                        <h6>Upcoming Tasks</h6>
+                        <div data-plugin-datepicker data-plugin-skin="dark" ></div>
+
+                        <ul>
+                            <li>
+                                <time datetime="2020-07-06T00:00+00:00">07/06/2020</time>
+                                <span>周末出游</span>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
+<!-- Vendor -->
+<script src="assets/vendor/jquery/jquery.js"></script>
+<script src="assets/vendor/jquery-browser-mobile/jquery.browser.mobile.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="assets/vendor/nanoscroller/nanoscroller.js"></script>
+<script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script src="assets/vendor/magnific-popup/magnific-popup.js"></script>
+<script src="assets/vendor/jquery-placeholder/jquery.placeholder.js"></script>
+
+<!-- Specific Page Vendor -->
+<script src="assets/vendor/jqvmap/jquery.vmap.js"></script>
+<script src="assets/vendor/jqvmap/data/jquery.vmap.sampledata.js"></script>
+<script src="assets/vendor/jqvmap/maps/jquery.vmap.world.js"></script>
+<script src="assets/vendor/jqvmap/maps/continents/jquery.vmap.africa.js"></script>
+<script src="assets/vendor/jqvmap/maps/continents/jquery.vmap.asia.js"></script>
+<script src="assets/vendor/jqvmap/maps/continents/jquery.vmap.australia.js"></script>
+<script src="assets/vendor/jqvmap/maps/continents/jquery.vmap.europe.js"></script>
+<script src="assets/vendor/jqvmap/maps/continents/jquery.vmap.north-america.js"></script>
+<script src="assets/vendor/jqvmap/maps/continents/jquery.vmap.south-america.js"></script>
+
+<!-- Theme Base, Components and Settings -->
+<script src="assets/javascripts/theme.js"></script>
+
+<!-- Theme Custom -->
+<script src="assets/javascripts/theme.custom.js"></script>
+
+<!-- Theme Initialization Files -->
+<script src="assets/javascripts/theme.init.js"></script>
+
+
+<!-- Examples -->
+<script src="assets/javascripts/maps/examples.vector.maps.js"></script>
+</body>
+</html>
